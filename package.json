@@ -1,0 +1,16 @@
+{
+  "name": "playwright-local-ui-tests",
+  "version": "1.0.0",
+  "description": "This is a test project for replacing the (Cypress) local UI tests.",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@playwright/test": "^1.39.0",
+    "@types/node": "^20.7.1",
+    "dotenv": "^16.3.1"
+    "playright": "^0.0.22"
+  }
+}
