@@ -13,11 +13,11 @@ const encodeStringWithoutPadding = (stringToEncode: string) => {
 const username = process.env.PLAYWRIGHT_USERNAME;
 
 export const createToken = ({
-  authTime,
-  iotTopic
+  authTime = new Date(),
+  iotTopic = "_IOT_TOPIC_"
 }: {
-  authTime: Date;
-  iotTopic: string;
+  authTime?: Date;
+  iotTopic?: string;
 }) => {
   const stringifiedHeader = JSON.stringify({
     alg: "HS256",

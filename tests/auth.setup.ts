@@ -1,14 +1,16 @@
 import { test as setup, expect } from "@playwright/test";
-import { createToken } from "../support/authentication";
 import { singleCustomerResponse } from "../fixtures/customerResponses/singleCustomerResponse";
 import { defaultCustomerFeaturesResponse } from "../fixtures/customerFeaturesResponses/defaultResponse";
 import { dateString } from "../support/dateString";
 import { defaultDashboardResponse } from "../fixtures/dashboardResponses/defaultResponse";
-
-const validToken = createToken({
-  authTime: new Date(),
-  iotTopic: "_IOT_TOPIC_"
-});
+import {
+  getAuthRoute,
+  getCurrentGasDateRoute,
+  getUserCustomersRoute
+} from "../support/endpointRoutes/authenticationRoutes";
+import { getCustomerFeaturesRoute } from "../support/endpointRoutes/sharedRoutes";
+import { getDashboardRoute } from "../support/endpointRoutes/dashboardRoutes";
+import { mockLogin } from "../support/pageHelpers/loginHelpers";
 
 setup("authenticate", async ({ page }) => {
   // navigate to unauthenticated page state
@@ -16,36 +18,17 @@ setup("authenticate", async ({ page }) => {
   await expect(page).toHaveTitle("Login - Chorus");
 
   // add valid token to browser context local storage
-  await page.evaluate(validToken => {
-    localStorage.setItem("userIdJwtToken", validToken);
-  }, validToken);
+  await mockLogin({ page });
 
   // add route mocks here
-
-  await page.route("**/*/userCustomers", async route => {
-    const json = singleCustomerResponse;
-    await route.fulfill({ json });
+  await getUserCustomersRoute({ page, json: singleCustomerResponse });
+  await getAuthRoute({ page });
+  await getCustomerFeaturesRoute({
+    page,
+    json: defaultCustomerFeaturesResponse
   });
-
-  await page.route(`**/*/auth`, async route => {
-    const json = { id_token: validToken };
-    await route.fulfill({ json });
-  });
-
-  await page.route(`**/*/customerFeatures`, async route => {
-    const json = defaultCustomerFeaturesResponse;
-    await route.fulfill({ json });
-  });
-
-  await page.route(`**/*/currentGasDate`, async route => {
-    const json = { currentGasDate: dateString.plus0.iso };
-    await route.fulfill({ json });
-  });
-
-  await page.route(`**/*/dashboard*`, async route => {
-    const json = defaultDashboardResponse;
-    await route.fulfill({ json });
-  });
+  await getCurrentGasDateRoute({ page });
+  await getDashboardRoute({ page, json: defaultDashboardResponse });
 
   // navigate to unauthenticated page state
   await page.goto("/");
