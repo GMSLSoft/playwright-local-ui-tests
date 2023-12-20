@@ -1,7 +1,6 @@
 import { test as setup, expect } from "@playwright/test";
 import { singleCustomerResponse } from "../fixtures/customerResponses/singleCustomerResponse";
 import { defaultCustomerFeaturesResponse } from "../fixtures/customerFeaturesResponses/defaultResponse";
-import { dateString } from "../support/dateString";
 import { defaultDashboardResponse } from "../fixtures/dashboardResponses/defaultResponse";
 import {
   getAuthRoute,
@@ -16,11 +15,13 @@ setup("authenticate", async ({ page }) => {
   // navigate to unauthenticated page state
   await page.goto("/");
   await expect(page).toHaveTitle("Login - Chorus");
+  await expect(page.getByLabel("Username")).toBeVisible();
+  await expect(page.getByLabel("Password")).toBeVisible();
 
   // add valid token to browser context local storage
   await mockLogin({ page });
 
-  // add route mocks here
+  // add mock routes
   await getUserCustomersRoute({ page, json: singleCustomerResponse });
   await getAuthRoute({ page });
   await getCustomerFeaturesRoute({
@@ -30,7 +31,7 @@ setup("authenticate", async ({ page }) => {
   await getCurrentGasDateRoute({ page });
   await getDashboardRoute({ page, json: defaultDashboardResponse });
 
-  // navigate to unauthenticated page state
+  // navigate to authenticated page state
   await page.goto("/");
   await expect(page).toHaveTitle("Dashboard - Chorus");
 
