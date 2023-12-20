@@ -9,6 +9,7 @@ import {
 } from "../support/endpointRoutes/authenticationRoutes";
 import { getDashboardRoute } from "../support/endpointRoutes/dashboardRoutes";
 import { getCustomerFeaturesRoute } from "../support/endpointRoutes/sharedRoutes";
+import { waitForPulsatingDotsToNotExist } from "../support/pageHelpers/loadingIndicators";
 
 test.beforeEach(async ({ page }) => {
   // add mock routes
@@ -25,6 +26,9 @@ test.beforeEach(async ({ page }) => {
 test("Test mock log in", async ({ page }) => {
   // navigate to authenticated page state
   await page.goto("/");
+
+  await waitForPulsatingDotsToNotExist({ page });
+
   await expect(page).toHaveTitle("Dashboard - Chorus");
 
   await expect(page.getByRole("heading", { name: "Page Title" })).toHaveText(
