@@ -10,7 +10,7 @@ import {
 import { getDashboardRoute } from "../support/endpointRoutes/dashboardRoutes";
 import { getCustomerFeaturesRoute } from "../support/endpointRoutes/sharedRoutes";
 
-test("Test mock log in", async ({ page }) => {
+test.beforeEach(async ({ page }) => {
   // add mock routes
   await getUserCustomersRoute({ page, json: singleCustomerResponse });
   await getAuthRoute({ page });
@@ -20,7 +20,9 @@ test("Test mock log in", async ({ page }) => {
   });
   await getCurrentGasDateRoute({ page });
   await getDashboardRoute({ page, json: defaultDashboardResponse });
+});
 
+test("Test mock log in", async ({ page }) => {
   // navigate to authenticated page state
   await page.goto("/");
   await expect(page).toHaveTitle("Dashboard - Chorus");
