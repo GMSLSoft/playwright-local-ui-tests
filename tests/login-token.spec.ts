@@ -26,6 +26,8 @@ test.beforeEach(async ({ page }) => {
 test("Test mock log in", async ({ page }) => {
   // navigate to authenticated page state
   await page.goto("/");
+
+  await page.waitForResponse("**/dashboard*");
   await waitForPulsatingDotsToNotExist({ page });
 
   await expect(page).toHaveTitle("Dashboard - Chorus");

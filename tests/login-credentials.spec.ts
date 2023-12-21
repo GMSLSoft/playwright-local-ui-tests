@@ -43,6 +43,7 @@ test.beforeEach(async ({ page }) => {
 
 test("Test successful log in", async ({ page }) => {
   await page.goto("/");
+
   await waitForPulsatingDotsToNotExist({ page: page });
 
   await expect(page).toHaveTitle("Login - Chorus");
@@ -51,6 +52,7 @@ test("Test successful log in", async ({ page }) => {
   await page.getByLabel("Password").fill(process.env.PLAYWRIGHT_PASSWORD);
   await page.getByRole("button", { name: "Log in" }).click();
 
+  await page.waitForResponse("**/dashboard*");
   await waitForPulsatingDotsToNotExist({ page });
 
   await expect(page.getByRole("heading", { name: "Page Title" })).toHaveText(
