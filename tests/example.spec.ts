@@ -26,7 +26,6 @@ test.beforeEach(async ({ page }) => {
 test("Test mock log in", async ({ page }) => {
   // navigate to authenticated page state
   await page.goto("/");
-
   await waitForPulsatingDotsToNotExist({ page });
 
   await expect(page).toHaveTitle("Dashboard - Chorus");
@@ -36,19 +35,45 @@ test("Test mock log in", async ({ page }) => {
   );
 });
 
-test("Test log in", async ({ page }) => {
-  // clear any stored tokens
-  await page.evaluate(() => window.localStorage.clear());
-  await page.evaluate(() => window.sessionStorage.clear());
+test("Test successful log in", async ({ browser }) => {
+  const blankStorageState = {
+    cookies: [],
+    origins: []
+  };
 
-  // go to unuthorised landing page (login)
-  await page.goto("/");
+  // create unauthorised browserContext with blank storageState
+  const blankContext = await browser.newContext({
+    storageState: blankStorageState
+  });
 
-  // enter username & password
-  await page.getByLabel("Username").fill(process.env.PLAYWRIGHT_USERNAME);
-  await page.getByLabel("Password").fill(process.env.PLAYWRIGHT_PASSWORD);
-  await page.getByRole("button", { name: "Log in" }).click();
+  // create new page using unauthorised browserContext
+  const unauthorisedPage = await blankContext.newPage();
+
+  await unauthorisedPage.goto("/");
+
+  // check at unauthorised landing page (login)
+  await expect(unauthorisedPage).toHaveTitle("Login - Chorus");
+  await waitForPulsatingDotsToNotExist({ page: unauthorisedPage });
+
+  // // enter username & password
+  await unauthorisedPage
+    .getByLabel("Username")
+    .fill(process.env.PLAYWRIGHT_USERNAME);
+  await unauthorisedPage
+    .getByLabel("Password")
+    .fill(process.env.PLAYWRIGHT_PASSWORD);
+  await unauthorisedPage.getByRole("button", { name: "Log in" }).click();
+
+  // expect unauthorised page to not be authorised due to login credentials
+  const authorisedPage = unauthorisedPage;
 
   // check at authorised landing page (dashboard)
-  await expect(page).toHaveTitle("Dashboard - Chorus");
+  await authorisedPage.goto("/");
+  await waitForPulsatingDotsToNotExist({ page: authorisedPage });
+
+  await expect(authorisedPage).toHaveTitle("Dashboard - Chorus");
+
+  await expect(
+    authorisedPage.getByRole("heading", { name: "Page Title" })
+  ).toHaveText("Dashboard");
 });
