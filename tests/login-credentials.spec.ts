@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test as base, expect } from "@playwright/test";
 import { defaultCustomerFeaturesResponse } from "../fixtures/customerFeaturesResponses/defaultResponse";
 import { singleCustomerResponse } from "../fixtures/customerResponses/singleCustomerResponse";
 import { defaultDashboardResponse } from "../fixtures/dashboardResponses/defaultResponse";
@@ -14,56 +14,46 @@ import { getDashboardRoute } from "../support/endpointRoutes/dashboardRoutes";
 import { getCustomerFeaturesRoute } from "../support/endpointRoutes/sharedRoutes";
 import { waitForPulsatingDotsToNotExist } from "../support/pageHelpers/loadingIndicators";
 
-test("Test successful log in", async ({ browser }) => {
-  const blankStorageState = {
-    cookies: [],
-    origins: []
-  };
+const test = base.extend({
+  storageState: async ({}, use) => {
+    const blankStorageState = {
+      cookies: [],
+      origins: []
+    };
+    await use(blankStorageState);
+  }
+});
 
-  // create unauthorised browserContext with blank storageState
-  const blankContext = await browser.newContext({
-    storageState: blankStorageState
-  });
+test.beforeEach(async ({ page }) => {
+  // add fake cognito routes
+  postFakeCognitoSignInRoute({ page });
+  mockDuoRedirectRoute({ page });
+  postFakeCognitoSendCustomChallengeAnswerRoute({ page });
 
-  // create new page using unauthorised browserContext
-  const newPage = await blankContext.newPage();
-
-  await newPage.goto("/");
-
-  // check at unauthorised landing page (login)
-  await expect(newPage).toHaveTitle("Login - Chorus");
-  await waitForPulsatingDotsToNotExist({ page: newPage });
-
-  //intercept post request
-  postFakeCognitoSignInRoute({ page: newPage });
-
-  // mock duo redirect
-  mockDuoRedirectRoute({ page: newPage });
-
-  // send challenge answer
-  postFakeCognitoSendCustomChallengeAnswerRoute({ page: newPage });
-
-  // add mock routes for new page context
-  await getUserCustomersRoute({ page: newPage, json: singleCustomerResponse });
-  await getAuthRoute({ page: newPage });
+  // add page routes
+  await getUserCustomersRoute({ page, json: singleCustomerResponse });
+  await getAuthRoute({ page });
   await getCustomerFeaturesRoute({
-    page: newPage,
+    page,
     json: defaultCustomerFeaturesResponse
   });
-  await getCurrentGasDateRoute({ page: newPage });
-  await getDashboardRoute({ page: newPage, json: defaultDashboardResponse });
+  await getCurrentGasDateRoute({ page });
+  await getDashboardRoute({ page, json: defaultDashboardResponse });
+});
 
-  // // enter username & password
-  await newPage.getByLabel("Username").fill(process.env.PLAYWRIGHT_USERNAME);
-  await newPage.getByLabel("Password").fill(process.env.PLAYWRIGHT_PASSWORD);
-  await newPage.getByRole("button", { name: "Log in" }).click();
+test("Test successful log in", async ({ page }) => {
+  await page.goto("/");
+  await waitForPulsatingDotsToNotExist({ page: page });
 
-  // check at authorised landing page (dashboard)
-  await waitForPulsatingDotsToNotExist({ page: newPage });
+  await expect(page).toHaveTitle("Login - Chorus");
 
-  await expect(newPage).toHaveTitle("Dashboard - Chorus");
+  await page.getByLabel("Username").fill(process.env.PLAYWRIGHT_USERNAME);
+  await page.getByLabel("Password").fill(process.env.PLAYWRIGHT_PASSWORD);
+  await page.getByRole("button", { name: "Log in" }).click();
 
-  await expect(newPage.getByRole("heading", { name: "Page Title" })).toHaveText(
+  await waitForPulsatingDotsToNotExist({ page });
+
+  await expect(page.getByRole("heading", { name: "Page Title" })).toHaveText(
     "Dashboard"
   );
 });
