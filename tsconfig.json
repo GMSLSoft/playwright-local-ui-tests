@@ -1,0 +1,11 @@
+{
+  "include": ["**/*.ts"],
+  "compilerOptions": {
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/support/*": ["./support/*"],
+      "@/fixtures/*": ["./fixtures/*"]
+    }
+  }
+}
