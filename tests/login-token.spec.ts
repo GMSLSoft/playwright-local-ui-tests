@@ -1,15 +1,15 @@
-import { test, expect } from "@playwright/test";
-import { defaultCustomerFeaturesResponse } from "../fixtures/customerFeaturesResponses/defaultResponse";
-import { singleCustomerResponse } from "../fixtures/customerResponses/singleCustomerResponse";
-import { defaultDashboardResponse } from "../fixtures/dashboardResponses/defaultResponse";
+import { defaultCustomerFeaturesResponse } from "@/fixtures/customerFeaturesResponses/defaultResponse";
+import { singleCustomerResponse } from "@/fixtures/customerResponses/singleCustomerResponse";
+import { defaultDashboardResponse } from "@/fixtures/dashboardResponses/defaultResponse";
 import {
   getUserCustomersRoute,
   getAuthRoute,
   getCurrentGasDateRoute
-} from "../support/endpointRoutes/authenticationRoutes";
-import { getDashboardRoute } from "../support/endpointRoutes/dashboardRoutes";
-import { getCustomerFeaturesRoute } from "../support/endpointRoutes/sharedRoutes";
-import { waitForPulsatingDotsToNotExist } from "../support/pageHelpers/loadingIndicators";
+} from "@/support/endpointRoutes/authenticationRoutes";
+import { getDashboardRoute } from "@/support/endpointRoutes/dashboardRoutes";
+import { getCustomerFeaturesRoute } from "@/support/endpointRoutes/sharedRoutes";
+import { waitForPulsatingDotsToNotExist } from "@/support/pageHelpers/loadingIndicators";
+import { test, expect } from "@playwright/test";
 
 test.beforeEach(async ({ page }) => {
   // add mock routes

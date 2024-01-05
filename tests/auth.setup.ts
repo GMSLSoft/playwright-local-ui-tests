@@ -1,15 +1,15 @@
-import { test as setup, expect } from "@playwright/test";
-import { singleCustomerResponse } from "../fixtures/customerResponses/singleCustomerResponse";
-import { defaultCustomerFeaturesResponse } from "../fixtures/customerFeaturesResponses/defaultResponse";
-import { defaultDashboardResponse } from "../fixtures/dashboardResponses/defaultResponse";
+import { defaultCustomerFeaturesResponse } from "@/fixtures/customerFeaturesResponses/defaultResponse";
+import { singleCustomerResponse } from "@/fixtures/customerResponses/singleCustomerResponse";
+import { defaultDashboardResponse } from "@/fixtures/dashboardResponses/defaultResponse";
 import {
+  getUserCustomersRoute,
   getAuthRoute,
-  getCurrentGasDateRoute,
-  getUserCustomersRoute
-} from "../support/endpointRoutes/authenticationRoutes";
-import { getCustomerFeaturesRoute } from "../support/endpointRoutes/sharedRoutes";
-import { getDashboardRoute } from "../support/endpointRoutes/dashboardRoutes";
-import { mockLogin } from "../support/pageHelpers/loginHelpers";
+  getCurrentGasDateRoute
+} from "@/support/endpointRoutes/authenticationRoutes";
+import { getDashboardRoute } from "@/support/endpointRoutes/dashboardRoutes";
+import { getCustomerFeaturesRoute } from "@/support/endpointRoutes/sharedRoutes";
+import { mockLogin } from "@/support/pageHelpers/loginHelpers";
+import { test as setup, expect } from "@playwright/test";
 
 setup("authenticate", async ({ page }) => {
   // navigate to unauthenticated page state
