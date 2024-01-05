@@ -16,7 +16,7 @@ import {
 } from "@/support/pageHelpers/sinonTimeHelpers";
 import { test, expect } from "@playwright/test";
 
-test.beforeEach(async ({ page, context }) => {
+test.beforeEach(async ({ page }) => {
   await getUserCustomersRoute({ page, json: singleCustomerResponse });
   await getAuthRoute({ page });
   await getCustomerFeaturesRoute({
@@ -25,14 +25,14 @@ test.beforeEach(async ({ page, context }) => {
   });
   await getCurrentGasDateRoute({ page });
   await getDashboardRoute({ page, json: defaultDashboardResponse });
+});
 
+test("Test moving time", async ({ page, context }) => {
   await setupSinonFakeDateTime({
     context,
     dateTimeString: dateString.plus0.iso
   });
-});
 
-test("Test moving time", async ({ page }) => {
   await page.goto("/");
 
   await page.waitForResponse("**/dashboard*");

@@ -2,13 +2,17 @@ import { BrowserContext, Page } from "@playwright/test";
 import * as sinon from "sinon";
 import * as path from "path";
 
-const setSinonFakeTimer = async ({ context }: { context: BrowserContext }) => {
+const addSinonFakeTimerToContext = async ({
+  context
+}: {
+  context: BrowserContext;
+}) => {
   await context.addInitScript({
     path: path.join(process.cwd(), "./node_modules/sinon/pkg/sinon.js")
   });
 };
 
-export const changeSinonFakeDateTime = async ({
+const setSinonFakeDateTimeForContext = async ({
   context,
   dateTimeString
 }: {
@@ -27,8 +31,8 @@ export const setupSinonFakeDateTime = async ({
   context: BrowserContext;
   dateTimeString: string;
 }) => {
-  await setSinonFakeTimer({ context });
-  await changeSinonFakeDateTime({ context, dateTimeString });
+  await addSinonFakeTimerToContext({ context });
+  await setSinonFakeDateTimeForContext({ context, dateTimeString });
 };
 
 export const tickSinonFakeDateTime = async ({
