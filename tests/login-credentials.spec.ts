@@ -21,6 +21,9 @@ const test = base.extend({
       origins: []
     };
     await use(blankStorageState);
+  },
+  userSpecifiedEnvironmentVariable: async ({}, use) => {
+    await use({ extendedBaseUsed: true });
   }
 });
 
@@ -41,8 +44,15 @@ test.beforeEach(async ({ page }) => {
   await getDashboardRoute({ page, json: defaultDashboardResponse });
 });
 
-test("Test successful log in", async ({ page }) => {
+test("Test successful log in", async ({
+  page,
+  userSpecifiedEnvironmentVariable
+}) => {
   await page.goto("/");
+
+  // proof of extended base use, should be enabled through TS
+  // console.log appears in "TEST RESULTS" tab
+  console.log(userSpecifiedEnvironmentVariable.extendedBaseUsed);
 
   await waitForPulsatingDotsToNotExist({ page: page });
 
