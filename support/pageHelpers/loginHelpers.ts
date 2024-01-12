@@ -3,12 +3,12 @@ import { createToken } from "../authentication";
 
 export const mockLogin = async ({
   page,
-  authTime = new Date()
+  authFromTime = new Date()
 }: {
   page: Page;
-  authTime?: Date;
+  authFromTime?: Date;
 }) => {
-  const validToken = createToken({ authTime });
+  const validToken = createToken({ authTime: authFromTime });
 
   await page.evaluate(validToken => {
     localStorage.setItem("userIdJwtToken", validToken);

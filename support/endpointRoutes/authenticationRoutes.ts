@@ -34,16 +34,16 @@ export const getCurrentGasDateRoute = async ({
 export const getAuthRoute = async ({
   page,
   status = 200,
-  authTime = new Date()
+  authFromTime = new Date()
 }: {
   page: Page;
   status?: number;
-  authTime?: Date;
+  authFromTime?: Date;
 }) => {
   const response =
     status === 200
       ? {
-          id_token: createToken({ authTime })
+          id_token: createToken({ authTime: authFromTime })
         }
       : {};
 
