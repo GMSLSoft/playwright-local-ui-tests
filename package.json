@@ -8,10 +8,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@playwright/test": "^1.40.1",
-    "@types/node": "^20.10.5",
-    "@types/sinon": "^17.0.2",
-    "dotenv": "^16.3.1",
+    "@playwright/test": "^1.42.1",
+    "@types/node": "^20.11.24",
+    "@types/sinon": "^17.0.3",
+    "dotenv": "^16.4.5",
     "playright": "^0.0.22",
     "sinon": "^17.0.1"
   }
