@@ -20,7 +20,10 @@ const setSinonFakeDateTimeForContext = async ({
   dateTimeString: string;
 }) => {
   await context.addInitScript(dateTimeString => {
-    window.__clock = sinon.useFakeTimers(new Date(dateTimeString));
+    window.__clock = sinon.useFakeTimers({
+      now: new Date(dateTimeString),
+      toFake: ["setInterval", "clearInterval", "Date" /*,"setTimeout"*/]
+    });
   }, dateTimeString);
 };
 
