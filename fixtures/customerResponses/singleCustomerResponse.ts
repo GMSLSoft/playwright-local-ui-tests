@@ -1,4 +1,4 @@
-import { customerA } from "../../support/keyData/customers/customers";
+import { customerA } from "../../support/keyData/customers";
 
 export const singleCustomerResponse = {
   customers: [
